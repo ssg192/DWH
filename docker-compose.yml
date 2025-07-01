@@ -1,0 +1,63 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_hospital
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hospital
+    volumes:
+      - ./base de datos:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - hospital_network
+
+  app:
+    build:
+      context: ./hospital
+    container_name: hospital-backend-container
+    environment:
+      mp.openapi.extensions.smallrye.info.title: Hospital
+      mp.openapi.extensions.smallrye.info.description: API Rest que implementa los endpoints del DW Hospital
+      quarkus.swagger-ui.display-operation-id: true
+      quarkus.swagger-ui.theme: original
+      quarkus.swagger-ui.always-include: true
+      quarkus.http.cors: true
+      quarkus.http.cors.origins: http://localhost:3000
+      quarkus.http.cors.methods: GET,POST,PUT,DELETE,OPTIONS
+      quarkus.http.cors.headers: Authorization,Content-Type
+      quarkus.datasource.db-kind: postgresql
+      quarkus.datasource.username: postgres
+      quarkus.datasource.password: postgres
+      quarkus.datasource.jdbc.url: jdbc:postgresql://postgres_hospital:5432/hospital
+      quarkus.http.access-log.enabled: true
+      quarkus.hibernate-orm.packages: hospital.external.jpa.model
+      quarkus.hibernate-orm.log.sql: true
+    ports:
+      - "8000:8080"
+    depends_on:
+      - postgres
+    networks:
+      - hospital_network
+    volumes:
+      - ./src/main/resources:/deployments/config
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend_hospital
+    ports:
+      - "3000:80"
+    depends_on:
+      - app
+    networks:
+      - hospital_network
+
+volumes:
+  postgres_data:
+
+networks:
+  hospital_network:
+    driver: bridge

@@ -10,7 +10,7 @@ services:
       - ./base de datos:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - hospital_network
 
@@ -31,7 +31,7 @@ services:
       quarkus.datasource.db-kind: postgresql
       quarkus.datasource.username: postgres
       quarkus.datasource.password: postgres
-      quarkus.datasource.jdbc.url: jdbc:postgresql://postgres_hospital:5432/hospital
+      quarkus.datasource.jdbc.url: jdbc:postgresql://postgres:5432/hospital
       quarkus.http.access-log.enabled: true
       quarkus.hibernate-orm.packages: hospital.external.jpa.model
       quarkus.hibernate-orm.log.sql: true

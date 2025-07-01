@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Configurar la base URL de tu API Quarkus
-const API_BASE_URL = 'http://localhost:8080'; // Cambié el puerto a 8080 que es el de Quarkus
+const API_BASE_URL = 'http://localhost:8000'; // Cambié el puerto a 8080 que es el de Quarkus
 
 const api = axios.create({
   baseURL: API_BASE_URL,
